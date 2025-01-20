@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史数据查询</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .ball {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            margin: 2px;
+        }
+
+        .red-ball {
+            background-color: red;
+        }
+
+        .blue-ball {
+            background-color: blue;
+        }
+
+        .ball-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>历史数据查询</h1>
+    </header>
+    <main>
+        <table id="historyTable" border="1" style="width: 100%; text-align: center;">
+            <thead>
+                <tr>
+                    <th>期号</th>
+                    <th>开奖日期</th>
+                    <th>开奖号码</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 数据行将通过JavaScript动态插入 -->
+            </tbody>
+        </table>
+        <script>
+            fetch('http://localhost:5000/api/history')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+                    data.forEach(entry => {
+                        const row = tableBody.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        const cell3 = row.insertCell(2);
+                        cell1.textContent = entry.draw_number;
+                        cell2.textContent = entry.draw_date;
+
+                        // 处理红球和蓝球
+                        const numbers = entry.numbers.split(' ');
+                        const redBalls = numbers.slice(0, 6); // 前6个是红球
+                        const blueBall = numbers[6]; // 第7个是蓝球
+
+                        const ballContainer = document.createElement('div');
+                        ballContainer.className = 'ball-container';
+
+                        // 添加红球
+                        redBalls.forEach(num => {
+                            const redBall = document.createElement('div');
+                            redBall.className = 'ball red-ball';
+                            redBall.textContent = num;
+                            ballContainer.appendChild(redBall);
+                        });
+
+                        // 添加蓝球
+                        const blueBallDiv = document.createElement('div');
+                        blueBallDiv.className = 'ball blue-ball';
+                        blueBallDiv.textContent = blueBall;
+                        ballContainer.appendChild(blueBallDiv);
+
+                        cell3.appendChild(ballContainer);
+                    });
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        </script>
+    </main>
+    <footer>
+        <p>© 2025 双色球项目</p>
+    </footer>
+</body>
+
+</html>

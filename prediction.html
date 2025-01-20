@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双色球预测</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>双色球预测</h1>
+    </header>
+    <main>
+        <input type="text" id="inputNumber" placeholder="输入幸运数字">
+        <button id="predictButton">算法预测</button>
+        <div id="predictionResult"></div>
+        <script>
+            document.getElementById('predictButton').addEventListener('click', function () {
+                const inputNumber = document.getElementById('inputNumber').value;
+                fetch('http://localhost:5000/api/predict_next', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ input_number: inputNumber })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('predictionResult').textContent =
+                            `预测的双色球号码: 红球: ${data.red_balls.join(', ')} 蓝球: ${data.blue_ball}`;
+                    })
+                    .catch(error => console.error('Error predicting:', error));
+            });
+        </script>
+    </main>
+    <footer>
+        <p>© 2025 双色球项目</p>
+    </footer>
+</body>
+
+</html>

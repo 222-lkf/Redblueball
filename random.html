@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机生成双色球号码</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .ball {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            margin: 2px;
+        }
+
+        .red-ball {
+            background-color: red;
+        }
+
+        .blue-ball {
+            background-color: blue;
+        }
+
+        .ball-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>随机生成双色球号码</h1>
+    </header>
+    <main>
+        <button id="generateButton">生成号码</button>
+        <div id="result"></div>
+        <script>
+            document.getElementById('generateButton').addEventListener('click', function () {
+                fetch('http://localhost:5000/api/random_numbers')
+                    .then(response => response.json())
+                    .then(data => {
+                        const resultDiv = document.getElementById('result');
+                        resultDiv.innerHTML = ''; // 清空之前的结果
+
+                        const ballContainer = document.createElement('div');
+                        data.red_balls.forEach(num => {
+                            const redBall = document.createElement('div');
+                            redBall.className = 'ball red-ball';
+                            redBall.textContent = num;
+                            ballContainer.appendChild(redBall);
+                        });
+
+                        const blueBallDiv = document.createElement('div');
+                        blueBallDiv.className = 'ball blue-ball';
+                        blueBallDiv.textContent = data.blue_ball;
+                        ballContainer.appendChild(blueBallDiv);
+
+                        resultDiv.appendChild(ballContainer);
+                    })
+                    .catch(error => console.error('Error generating numbers:', error));
+            });
+        </script>
+    </main>
+    <footer>
+        <p>© 2025 双色球项目</p>
+    </footer>
+</body>
+
+</html>
